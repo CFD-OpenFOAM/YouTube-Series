@@ -30,9 +30,9 @@ the most heat **per unit volume** (Q/V). The winner: **11 razor-thin fins**.
 |--------|:--------:|:---------:|:------:|
 | Fins × thickness | 5 × 2.0 mm | 11 × 1.01 mm | — |
 | Specific heat rate **Q/V** | 1.08 W/cm³ | **2.02 W/cm³** | **+87%** ¹ |
-| Thermal resistance **R_th** | 2.14 K/W | **0.53 K/W** | **−75%** |
+| Thermal resistance **R_th** | 2.14 K/W | **0.93 K/W** | **−56%** ¹ |
 
-<sub>¹ +87% is the high-fidelity, boundary-layer-resolved validated figure (Q/V 1.08 → 2.02). The fast optimization search estimated +106% (Q/V ≈ 2.22). See [Episode 6](episode-06-cht-validation/) for the validation — and the conjugate-heat-transfer deep-dive.</sub>
+<sub>¹ Validated, boundary-layer-resolved figures (Q/V 1.08 → 2.02; R_th 2.14 → 0.93, defined as ΔT/Q with a fixed 350 K wall). The fast coarse-mesh search estimated more (Q/V ≈ 2.22 / +106%; R_th ≈ 0.85). A separate conjugate-heat-transfer run reports an absolute *junction* resistance of ~1.12 K/W at a 10 W load — a different metric; see [Episode 6](episode-06-cht-validation/).</sub>
 
 <p align="center">
   <img src="assets/baseline-vs-optimal.gif" alt="Side-by-side tour of the baseline vs the optimized heatsink" width="90%">
