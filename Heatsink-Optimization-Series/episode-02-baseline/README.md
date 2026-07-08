@@ -27,7 +27,7 @@ OpenFOAM from a blank case to a real result — STL → mesh → physics → sol
 |--------|-------|
 | Heat dissipated **Q** | ≈ 24.6 W |
 | Specific heat rate **Q/V** | **1.08 W/cm³** |
-| Thermal resistance **R_th** | 2.14 K/W |
+| Thermal resistance **R_th** | 2.03 K/W |
 
 Everything in the rest of the series is about beating **Q/V = 1.08**.
 
@@ -37,12 +37,13 @@ Everything in the rest of the series is about beating **Q/V = 1.08**.
 
 ```
 episode-02-baseline/
-├── case/                       ← the OpenFOAM case
+├── case/                       ← the OpenFOAM case (surface-refined mesh)
 │   ├── 0/                      #   initial & boundary conditions (U, T, p, p_rgh, alphat)
 │   ├── constant/               #   physics + geometry (thermophysical, turbulence, STL)
 │   ├── system/                 #   blockMesh, snappyHexMesh, solver settings
 │   ├── Allrun                  #   one-shot mesh + solve
 │   └── Allclean                #   reset the case
+├── feature-refined-mesh/       ← optional higher-quality mesh (feature-edge refinement)
 └── scripts/
     └── generate_heatsink_stl.py   ← turns (N, t, H) into the heatsink STL — no CAD
 ```
@@ -53,11 +54,15 @@ episode-02-baseline/
 
 Requires **OpenFOAM 2506** (source its `bashrc` first).
 
-```bash
-cd case
+> ⚠️ Run on a **local disk**, not a virtualized shared mount (e.g. a Multipass
+> shared folder). snappyHexMesh does thousands of tiny file writes and slows to a
+> near-standstill on virtiofs/sshfs — copy the case to `/tmp` or `$FOAM_RUN` first.
 
-# (optional) regenerate the STL from parameters
-python ../scripts/generate_heatsink_stl.py \
+```bash
+cp -r case /tmp/ep2 && cd /tmp/ep2
+
+# (optional) regenerate the STL from parameters (script lives in ../scripts)
+python generate_heatsink_stl.py \
     --n-fins 5 --fin-thickness 0.002 --fin-height 0.020 \
     --output constant/triSurface/heatsink.stl
 
@@ -66,12 +71,17 @@ python ../scripts/generate_heatsink_stl.py \
 
 # ...or step by step
 blockMesh
-surfaceFeatureExtract
 snappyHexMesh -overwrite
 buoyantSimpleFoam
 ```
 
 Reset any time with `./Allclean`.
+
+### Optional: a sharper mesh
+
+The main case uses surface refinement only. For a higher-quality mesh with
+**feature-edge refinement**, see [`feature-refined-mesh/`](feature-refined-mesh/)
+— same physics and result (Q/V ≈ 1.08), just crisper fin edges.
 
 ## Read the result
 

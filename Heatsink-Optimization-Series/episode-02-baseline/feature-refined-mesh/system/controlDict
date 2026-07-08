@@ -1,0 +1,40 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+
+application     buoyantSimpleFoam;
+
+startFrom       latestTime;
+startTime       0;
+stopAt          endTime;
+endTime         1000;
+deltaT          1;
+
+writeControl    timeStep;
+writeInterval   200;
+purgeWrite      3;
+
+writeFormat     ascii;
+writePrecision  8;
+writeCompression off;
+
+timeFormat      general;
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    wallHeatFlux1
+    {
+        type            wallHeatFlux;
+        libs            (fieldFunctionObjects);
+        executeControl  writeTime;
+        writeControl    writeTime;
+        patches         ("heatsink.*");
+    }
+}
