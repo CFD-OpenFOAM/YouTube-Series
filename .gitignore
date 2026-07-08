@@ -1,0 +1,17 @@
+# ── macOS junk ──
+.DS_Store
+
+# ── Python ──
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# ── OpenFOAM run artifacts (regenerated when you run a case) ──
+# Keep the 0/ dir (initial + boundary conditions) but drop later time steps.
+**/[1-9]*/
+**/processor*/
+**/constant/polyMesh/
+**/constant/extendedFeatureEdgeMesh/
+**/constant/triSurface/*.eMesh
+**/VTK/
+**/log.*
