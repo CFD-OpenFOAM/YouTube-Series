@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/OpenFOAM-2506-blue" alt="OpenFOAM 2506">
   <img src="https://img.shields.io/badge/Optuna-TPE-purple" alt="Optuna">
   <img src="https://img.shields.io/badge/Python-3.11-yellow?logo=python" alt="Python">
-  <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="Apache 2.0">
 </p>
 
 ---
@@ -123,7 +123,7 @@ Each episode folder has its own README with the exact steps to run it.
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE). Use it, fork it, point it at your own geometry.
+Apache 2.0 — see [`LICENSE`](LICENSE). Use it, fork it, point it at your own geometry.
 
 ---
 
