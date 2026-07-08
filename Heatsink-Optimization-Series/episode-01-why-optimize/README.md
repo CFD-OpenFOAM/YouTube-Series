@@ -105,9 +105,9 @@ The optimizer converged on **11 razor-thin fins** — a design that sounds wrong
 |--------|:--------:|:---------:|:------:|
 | Fins × thickness | 5 × 2.0 mm | 11 × 1.01 mm | — |
 | **Q/V** | 1.08 W/cm³ | **2.02 W/cm³** | **+87%** ¹ |
-| **R_th** | 2.14 K/W | **0.53 K/W** | **−75%** |
+| **R_th** | 2.14 K/W | **0.93 K/W** | **−56%** ¹ |
 
-<sub>¹ CHT-validated. The fast optimization search estimated +106% (Q/V ≈ 2.22).</sub>
+<sub>¹ Boundary-layer-resolved validated figures (R_th = ΔT/Q, fixed 350 K wall). The fast coarse-mesh search estimated more (Q/V ≈ 2.22 / +106%; R_th ≈ 0.85 K/W). See Episode 6 for the validation.</sub>
 
 The optimizer found the answer in under ten simulations — and fin thickness
 turned out to matter most:
