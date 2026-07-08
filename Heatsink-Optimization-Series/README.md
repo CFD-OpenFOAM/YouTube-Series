@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/OpenFOAM-2506-blue" alt="OpenFOAM 2506">
   <img src="https://img.shields.io/badge/Optuna-TPE-purple" alt="Optuna">
   <img src="https://img.shields.io/badge/Python-3.11-yellow?logo=python" alt="Python">
-  <img src="https://img.shields.io/badge/license-MIT-green" alt="Apache 2.0">
+  <img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="Apache 2.0">
 </p>
 
 ---
