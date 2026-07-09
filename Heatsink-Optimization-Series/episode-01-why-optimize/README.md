@@ -1,6 +1,6 @@
 # Episode 1 — Why Optimize a Heatsink?
 
-📺 **Watch:** _coming soon_ · Part of the [Heatsink Optimization Series](../README.md)
+📺 **Watch:** https://youtu.be/xt13qITFsEo· Part of the [Heatsink Optimization Series](../README.md)
 
 > This is the **planner & background** for the whole series — the *why* and the
 > *plan*, before any code. No simulations here, just the thinking.
