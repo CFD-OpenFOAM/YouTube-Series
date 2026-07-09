@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# Allrun — baseline heatsink, FEATURE-REFINED variant (buoyantSimpleFoam, OpenFOAM 2506)
+#
+# This variant uses a FLUSH base (base_extension=0) so snappyHexMesh can do
+# feature-edge refinement without hanging. It produces a sharper mesh at the fin
+# edges than the main ../case (which uses surface refinement only). Physics and
+# results are equivalent (Q ~ 24.7 W, Q/V ~ 1.08).
+#
+# IMPORTANT — run on the VM's LOCAL disk, not a shared mount (virtiofs/sshfs are
+# far too slow for snappyHexMesh's small-file I/O). Copy to /tmp or $FOAM_RUN.
+#
+# Usage:
+#   source /usr/lib/openfoam/openfoam2506/etc/bashrc
+#   cp -r <this-folder> /tmp/ep2fr && cd /tmp/ep2fr
+#   ./Allrun
+
+set -e
+
+echo "Cleaning previous run..."
+rm -rf constant/polyMesh constant/triSurface/*.eMesh constant/extendedFeatureEdgeMesh \
+       postProcessing processor*
+find . -maxdepth 1 -regex '\./[0-9]+.*' ! -name '0' -exec rm -rf {} +
+echo "  Done."
+
+# The FLUSH STL ships in constant/triSurface/heatsink.stl.
+# Regenerate with:  python ../scripts/generate_heatsink_stl.py --base-extension 0
+if [ ! -f constant/triSurface/heatsink.stl ]; then
+    echo "ERROR: constant/triSurface/heatsink.stl not found."; exit 1
+fi
+
+echo ""
+echo "Running blockMesh..."
+blockMesh > log.blockMesh 2>&1 && tail -3 log.blockMesh
+
+echo ""
+echo "Running surfaceFeatureExtract (builds heatsink.eMesh for feature refinement)..."
+surfaceFeatureExtract > log.surfaceFeatureExtract 2>&1 && tail -3 log.surfaceFeatureExtract
+
+echo ""
+echo "Running snappyHexMesh (with feature-edge refinement)..."
+snappyHexMesh -overwrite > log.snappyHexMesh 2>&1 && tail -3 log.snappyHexMesh
+
+echo ""
+echo "Checking mesh..."
+checkMesh > log.checkMesh 2>&1 && tail -8 log.checkMesh
+
+echo ""
+echo "Running buoyantSimpleFoam..."
+buoyantSimpleFoam > log.buoyantSimpleFoam 2>&1 && tail -5 log.buoyantSimpleFoam
+
+echo ""
+echo "=========================================="
+echo "  Run complete!"
+echo "  Heat rate Q: postProcessing/wallHeatFlux1/"
+echo "=========================================="

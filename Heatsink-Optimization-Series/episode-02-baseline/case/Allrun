@@ -1,54 +1,58 @@
 #!/bin/bash
 #
-# Allrun - Heat sink buoyantSimpleFoam case
-# Run this from WSL after sourcing OpenFOAM-2412
+# Allrun — baseline heatsink case (buoyantSimpleFoam), OpenFOAM 2506
+#
+# IMPORTANT — run on the VM's LOCAL disk, not a shared mount.
+#   Multipass/virtiofs/sshfs shared mounts are far too slow for snappyHexMesh's
+#   many-small-file I/O and will appear to "hang". Copy the case to fast local
+#   storage first (e.g. /tmp or $FOAM_RUN).
 #
 # Usage:
-#   source /path/to/openfoam2412/etc/bashrc   # or your alias
-#   cd /mnt/c/OpenFOAM/Project/Wrench-Wise/2-Webinars/Phase-3/10-Jun-Automation-Engineer/test-case
+#   source /usr/lib/openfoam/openfoam2506/etc/bashrc
+#   cp -r <this-case-folder> /tmp/ep2 && cd /tmp/ep2
 #   ./Allrun
 #
+# Note: feature-edge refinement is intentionally DISABLED in
+# system/snappyHexMeshDict — it stalls snappyHexMesh at "Feature refinement
+# iteration 0" in OpenFOAM 2506 on this geometry (the base protrudes just below
+# the domain floor, so its feature edges fall outside the mesh). Surface
+# refinement alone resolves the fins, so surfaceFeatureExtract is not needed.
 
 set -e
 
 # ── Clean previous results ────────────────────────────────────────────────────
 echo "Cleaning previous run..."
-rm -rf constant/polyMesh
-rm -rf constant/triSurface/*.eMesh
+rm -rf constant/polyMesh constant/triSurface/*.eMesh postProcessing processor*
 find . -maxdepth 1 -regex '\./[0-9]+.*' ! -name '0' -exec rm -rf {} +
-rm -rf postProcessing processor*
 echo "  Done."
 
-# ── Prepare triSurface directory ──────────────────────────────────────────────
-mkdir -p constant/triSurface
-cp heatsink.stl constant/triSurface/
-echo "  STL copied to constant/triSurface/"
+# The STL ships in constant/triSurface/heatsink.stl.
+# Regenerate it with ../scripts/generate_heatsink_stl.py if you change geometry.
+if [ ! -f constant/triSurface/heatsink.stl ]; then
+    echo "ERROR: constant/triSurface/heatsink.stl not found."; exit 1
+fi
 
 # ── Meshing ───────────────────────────────────────────────────────────────────
 echo ""
 echo "Running blockMesh..."
-blockMesh 2>&1 | tail -5
-
-echo ""
-echo "Running surfaceFeatureExtract..."
-surfaceFeatureExtract 2>&1 | tail -5
+blockMesh > log.blockMesh 2>&1 && tail -3 log.blockMesh
 
 echo ""
 echo "Running snappyHexMesh..."
-snappyHexMesh -overwrite 2>&1 | tail -10
+snappyHexMesh -overwrite > log.snappyHexMesh 2>&1 && tail -3 log.snappyHexMesh
 
 echo ""
 echo "Checking mesh..."
-checkMesh 2>&1 | tail -20
+checkMesh > log.checkMesh 2>&1 && tail -8 log.checkMesh
 
 # ── Solve ─────────────────────────────────────────────────────────────────────
 echo ""
 echo "Running buoyantSimpleFoam..."
-buoyantSimpleFoam 2>&1 | tee log.buoyantSimpleFoam | tail -5
+buoyantSimpleFoam > log.buoyantSimpleFoam 2>&1 && tail -5 log.buoyantSimpleFoam
 
 echo ""
 echo "=========================================="
 echo "  Run complete!"
-echo "  Check log.buoyantSimpleFoam for details"
-echo "  Post-processing data in postProcessing/"
+echo "  Heat rate Q: postProcessing/wallHeatFlux1/"
+echo "  Logs: log.blockMesh, log.snappyHexMesh, log.buoyantSimpleFoam"
 echo "=========================================="

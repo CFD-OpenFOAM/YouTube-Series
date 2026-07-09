@@ -35,19 +35,19 @@ castellatedMeshControls
     maxLoadUnbalance    0.10;
     nCellsBetweenLevels 3;
 
+    // Feature refinement is intentionally DISABLED. OpenFOAM 2506's
+    // explicit-feature snapping on this heatsink.eMesh stalls snappyHexMesh at
+    // "Feature refinement iteration 0". The validated workflow (see run_003)
+    // meshes cleanly without it — surface refinement alone resolves the fins.
     features
     (
-        {
-            file "heatsink.eMesh";
-            level 3;
-        }
     );
 
     refinementSurfaces
     {
         heatsink
         {
-            level (2 3);
+            level (1 2);
         }
     }
 
