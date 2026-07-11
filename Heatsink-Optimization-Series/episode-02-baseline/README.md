@@ -62,6 +62,7 @@ Requires **OpenFOAM 2506** (source its `bashrc` first).
 cp -r case /tmp/ep2 && cd /tmp/ep2
 
 # (optional) regenerate the STL from parameters (script lives in ../scripts)
+# Python deps: Python 3.8+, numpy, numpy-stl  →  pip install numpy numpy-stl
 python generate_heatsink_stl.py \
     --n-fins 5 --fin-thickness 0.002 --fin-height 0.020 \
     --output constant/triSurface/heatsink.stl
@@ -96,6 +97,16 @@ integral Q in watts). Divide by the solid volume to get Q/V.
 `generate_heatsink_stl.py` takes three numbers and writes an STL. That's what
 makes everything else possible: in later episodes the optimizer calls this exact
 script **hundreds of times** with different numbers — no mouse, no CAD.
+
+**Dependencies** — a Python 3.8+ interpreter with two packages (no OpenFOAM
+needed just to build the STL):
+
+```bash
+pip install numpy numpy-stl
+```
+
+The script imports `numpy` and `stl` (the `stl` module is provided by the
+**numpy-stl** package — note the install name differs from the import name).
 
 ```bash
 python scripts/generate_heatsink_stl.py --help
