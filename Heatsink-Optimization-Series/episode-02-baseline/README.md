@@ -1,6 +1,6 @@
 # Episode 2 — The Baseline: One Case, End to End
 
-📺 **Watch:** _coming soon_ · Part of the [Heatsink Optimization Series](../README.md)
+📺 **Watch:** https://youtu.be/NMkb8JBXnU8 · Part of the [Heatsink Optimization Series](../README.md)
 
 Before you can optimize anything, you need a **number to beat**. This episode
 builds that number: a single 5-fin aluminium heatsink, simulated properly in
