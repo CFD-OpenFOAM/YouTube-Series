@@ -47,8 +47,8 @@ pure motivation, so it has no code.
 
 | # | Episode | Watch | Code | Status |
 |:-:|---------|:-----:|------|:------:|
-| 1 | **Why Optimize a Heatsink?** | _coming soon_ | [`episode-01-why-optimize/`](episode-01-why-optimize/) — planner &amp; background | ✅ |
-| 2 | **The Baseline: One Case, End to End** | _coming soon_ | [`episode-02-baseline/`](episode-02-baseline/) | ✅ |
+| 1 | **Why Optimize a Heatsink?** | https://youtu.be/xt13qITFsEo | [`episode-01-why-optimize/`](episode-01-why-optimize/) — planner &amp; background | ✅ |
+| 2 | **The Baseline: One Case, End to End** | https://youtu.be/NMkb8JBXnU8 | [`episode-02-baseline/`](episode-02-baseline/) | ✅ |
 | 3 | **Automating CFD: Parametric Sweeps** | _coming soon_ | [`episode-03-parametric-sweeps/`](episode-03-parametric-sweeps/) | ✅ |
 | 4 | **Bayesian Optimization, Explained** | _coming soon_ | [episode-04-bayesian-optimization/](episode-04-bayesian-optimization/) | ✅ |
 | 5 | **Running the Optimization Loop** | _coming soon_ | [`episode-05-optimization-loop/`](episode-05-optimization-loop/) | ✅ |
