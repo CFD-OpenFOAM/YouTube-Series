@@ -1,0 +1,15 @@
+name: heatsink-opt
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - matplotlib
+  - scipy
+  - tqdm
+  - pyvista
+  - pip:
+    - numpy-stl
+    - optuna
