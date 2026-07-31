@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Allclean - Remove generated files
+#
+
+set -e
+
+echo "Cleaning case..."
+rm -rf constant/polyMesh
+rm -rf constant/triSurface/*.eMesh
+find . -maxdepth 1 -regex '\./[0-9]+.*' ! -name '0' -exec rm -rf {} +
+rm -rf postProcessing processor* log.*
+echo "Done."

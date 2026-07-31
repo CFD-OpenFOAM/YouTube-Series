@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# Allrun - Heat sink buoyantSimpleFoam case
+# Run this from WSL after sourcing OpenFOAM-2412
+#
+# Usage:
+#   source /path/to/openfoam2412/etc/bashrc   # or your alias
+#   cd /mnt/c/OpenFOAM/Project/Wrench-Wise/2-Webinars/Phase-3/10-Jun-Automation-Engineer/test-case
+#   ./Allrun
+#
+
+set -e
+
+# ── Clean previous results ────────────────────────────────────────────────────
+echo "Cleaning previous run..."
+rm -rf constant/polyMesh
+rm -rf constant/triSurface/*.eMesh
+find . -maxdepth 1 -regex '\./[0-9]+.*' ! -name '0' -exec rm -rf {} +
+rm -rf postProcessing processor*
+echo "  Done."
+
+# ── Prepare triSurface directory ──────────────────────────────────────────────
+mkdir -p constant/triSurface
+cp heatsink.stl constant/triSurface/
+echo "  STL copied to constant/triSurface/"
+
+# ── Meshing ───────────────────────────────────────────────────────────────────
+echo ""
+echo "Running blockMesh..."
+blockMesh 2>&1 | tail -5
+
+echo ""
+echo "Running surfaceFeatureExtract..."
+surfaceFeatureExtract 2>&1 | tail -5
+
+echo ""
+echo "Running snappyHexMesh..."
+snappyHexMesh -overwrite 2>&1 | tail -10
+
+echo ""
+echo "Checking mesh..."
+checkMesh 2>&1 | tail -20
+
+# ── Solve ─────────────────────────────────────────────────────────────────────
+echo ""
+echo "Running buoyantSimpleFoam..."
+buoyantSimpleFoam 2>&1 | tee log.buoyantSimpleFoam | tail -5
+
+echo ""
+echo "=========================================="
+echo "  Run complete!"
+echo "  Check log.buoyantSimpleFoam for details"
+echo "  Post-processing data in postProcessing/"
+echo "=========================================="
