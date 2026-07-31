@@ -1,0 +1,43 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 300;
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           uniform 300;
+    }
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 300;
+        value           uniform 300;
+    }
+    bottom
+    {
+        type            zeroGradient;
+    }
+    top
+    {
+        type            zeroGradient;
+    }
+    "(side_left|side_right)"
+    {
+        type            zeroGradient;
+    }
+    "heatsink.*"
+    {
+        type            fixedValue;
+        value           uniform 350;
+    }
+}
