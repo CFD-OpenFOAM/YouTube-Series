@@ -666,34 +666,40 @@ def run_optimize(n_trials=20, seed_from_csv=True):
         sampler        = optuna.samplers.TPESampler(seed=42),
     )
 
-    if seed_from_csv and RESULTS_CSV.exists():
-        try:
-            import pandas as pd
-            df = pd.read_csv(RESULTS_CSV)
-            df = df[df["status"] == "OK"].copy()
-            seeded = 0
-            for _, row in df.iterrows():
-                try:
-                    trial = optuna.trial.create_trial(
-                        params={
-                            "t_fin": float(row["t_fin_mm"]) / 1000.0,
-                            "N_fin": int(row["N_fin"]),
-                            "H_fin": float(row["H_fin_mm"]) / 1000.0,
-                        },
-                        distributions={
-                            "t_fin": optuna.distributions.FloatDistribution(0.001, 0.003),
-                            "N_fin": optuna.distributions.IntDistribution(3, 11),
-                            "H_fin": optuna.distributions.FloatDistribution(0.010, 0.030),
-                        },
-                        value=float(row["Q_over_V"]),
-                    )
-                    study.add_trial(trial)
-                    seeded += 1
-                except Exception:
-                    pass
-            print(f"  Seeded {seeded} trials from {RESULTS_CSV}")
-        except ImportError:
-            print("  WARNING: pandas not available -- skipping CSV seed")
+    if seed_from_csv:
+        # Prefer the user's own accumulated results; fall back to the bundled seed CSV.
+        _bundled_seed = PROJECT_DIR / "results.csv"
+        _seed_csv = RESULTS_CSV if RESULTS_CSV.exists() else (
+            _bundled_seed if _bundled_seed.exists() else None
+        )
+        if _seed_csv:
+            try:
+                import pandas as pd
+                df = pd.read_csv(_seed_csv)
+                df = df[df["status"] == "OK"].copy()
+                seeded = 0
+                for _, row in df.iterrows():
+                    try:
+                        trial = optuna.trial.create_trial(
+                            params={
+                                "t_fin": float(row["t_fin_mm"]) / 1000.0,
+                                "N_fin": int(row["N_fin"]),
+                                "H_fin": float(row["H_fin_mm"]) / 1000.0,
+                            },
+                            distributions={
+                                "t_fin": optuna.distributions.FloatDistribution(0.001, 0.003),
+                                "N_fin": optuna.distributions.IntDistribution(3, 11),
+                                "H_fin": optuna.distributions.FloatDistribution(0.010, 0.030),
+                            },
+                            value=float(row["Q_over_V"]),
+                        )
+                        study.add_trial(trial)
+                        seeded += 1
+                    except Exception:
+                        pass
+                print(f"  Seeded {seeded} trials from {_seed_csv}")
+            except ImportError:
+                print("  WARNING: pandas not available -- skipping CSV seed")
 
     print(f"\n{'#'*62}")
     print(f"  BAYESIAN OPTIMISATION: {n_trials} trials")

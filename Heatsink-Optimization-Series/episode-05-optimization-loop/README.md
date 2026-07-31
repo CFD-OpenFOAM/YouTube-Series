@@ -131,7 +131,7 @@ crash.
 ```bash
 conda env create -f environment.yml && conda activate heatsink-opt
 
-# optional: override the defaults without editing Python
+# override the machine-specific defaults (skip if the defaults already match your setup)
 export HEATSINK_VM_NAME=rewarded-bluefish
 export HEATSINK_RESULTS_DIR=/Volumes/Sid/heatsink-opt
 export HEATSINK_MULTIPASS_HOST=/Users/yourname/Home/Multipass_Files
@@ -143,7 +143,7 @@ bash setup.sh
 # verify the VM / paths first
 python optimize_heatsink.py check
 
-# run the Bayesian optimization loop (seeds from Episode 3's CSV automatically)
+# run the Bayesian optimization loop
 python optimize_heatsink.py optimize --trials 20
 ```
 
@@ -153,9 +153,22 @@ python optimize_heatsink.py optimize --trials 20
 - set `HEATSINK_RESULTS_DIR` to a writable host directory for `results.csv` + `optuna_study.db`
 - set `HEATSINK_VM_NAME` to your actual OpenFOAM VM name
 
+**Fresh start — what happens on first run:**
+
+The bundled `results.csv` contains the Episode 3 sweep data (23 rows). The
+optimizer reads it automatically and uses those runs to warm-start the TPE model
+before the first CFD call — no manual seeding step needed. If you have already
+run Episode 3 yourself and have your own `results.csv` at `HEATSINK_RESULTS_DIR`,
+that file takes precedence.
+
+`optuna_study.db` is **not** included in the repo and should not be created
+manually. Optuna creates it at `HEATSINK_RESULTS_DIR/optuna_study.db` on the
+first call to `optimize`. The study is resumable: kill the run and restart with
+the same command and it picks up from where it left off.
+
 The plotting scripts are post-processing only: `plot_results.py` needs a populated
-`results.csv`, and `plot_bo_results.py` needs both `results.csv` and
-`optuna_study.db` from a completed optimization run.
+`results.csv` at `HEATSINK_RESULTS_DIR`, and `plot_bo_results.py` additionally
+needs `optuna_study.db` from a completed optimization run.
 
 Each trial patches the template, generates an STL, meshes and solves on the VM,
 reads back `Q`, and logs `{N, t, H, Q, V, Q/V, R_th}` to `results.csv`. Then TPE
